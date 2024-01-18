@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pl">
+  <head>
+    <link rel="icon" type="image/svg+xml" href="favico.svg" />
+    <link rel="stylesheet"
+    href="https://s3-us-west-1.amazonaws.com/patterns.esri.com/files/calcite-web/1.2.5/css/calcite-web.min.css">
+
+    <title>Interaktywna Mapa Wypadków</title>
+    
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="keywords" content="wypadki, mapa, interaktywna mapa, wypadki drogowe, bezpieczeństwo drogowe, analiza wypadków">
+    <meta name="description" content="Przeglądaj i odkrywaj miejsca zdarzeń, identyfikuj najniebezpieczniejsze lokalizacje, filtruj dane, analizuj statystyki i zwiększ świadomość społeczną w zakresie bezpieczeństwa drogowego.">
+    
+    <meta name="author" content="AdamChyl">
+    
+    <!-- Facebook Meta Tags -->
+    <meta property="og:url" content="https://wypadki.netlify.app/">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Iteraktywna mapa wypadków drogowych">
+    <meta property="og:description" content="Przeglądaj i odkrywaj miejsca zdarzeń, identyfikuj najniebezpieczniejsze lokalizacje, filtruj dane, analizuj statystyki i zwiększ świadomość społeczną w zakresie bezpieczeństwa drogowego.">
+    <meta property="og:image" content="https://wypadki.netlify.app/thumb.png">
+
+    <!-- Twitter Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta property="twitter:domain" content="wypadki.netlify.app">
+    <meta property="twitter:url" content="https://wypadki.netlify.app/">
+    <meta name="twitter:title" content="Iteraktywna mapa wypadków drogowych">
+    <meta name="twitter:description" content="Przeglądaj i odkrywaj miejsca zdarzeń, identyfikuj najniebezpieczniejsze lokalizacje, filtruj dane, analizuj statystyki i zwiększ świadomość społeczną w zakresie bezpieczeństwa drogowego.">
+    <meta name="twitter:image" content="https://wypadki.netlify.app/thumb.png">
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org/",
+        "@type": "WebApplication",
+        "name": "Interaktywna Mapa Wypadków",
+        "description": "Przeglądaj i analizuj miejsca wypadków drogowych, zwiększając świadomość społeczną w zakresie bezpieczeństwa drogowego.",
+        "url": "https://wypadki.netlify.app/",
+        "applicationCategory": "Mapping",
+        "datePublished": "2024-01-01",
+        "image": "https://wypadki.netlify.app/thumb.png",
+        "operatingSystem": "Cross-platform",
+      }
+      </script>
+
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/index.jsx"></script>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-6V10TPPM2K"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-6V10TPPM2K');
+    </script>
+  </body>
+</html>

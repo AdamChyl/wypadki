@@ -1,0 +1,337 @@
+@import "https://js.arcgis.com/4.28/@arcgis/core/assets/esri/themes/dark/main.css";
+@import "mapbox-gl/dist/mapbox-gl.css";
+
+body {
+  padding: 0;
+  margin: 0;
+  height: 100%;
+  width: 100%;
+  font-family: sans-serif;
+  position: relative;
+  overflow: hidden;
+}
+
+.header-container {
+  padding-bottom: 0px;
+  font-size: 16px;
+  font-weight: bold;
+  border-bottom: 2px solid #555;
+}
+
+.maplibregl-ctrl-bottom-right {
+  display: none
+}
+
+.credits-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.widget-div:hover {
+  color: #ededed;
+  background-color: #303030;
+}
+
+.mobile-splash {
+  display: none;
+}
+
+#header {
+  position: absolute;
+  top: 2rem;
+}
+
+.title {
+  font-weight: 500;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 30px;
+  line-height: 1.1;
+  color: white;
+  text-shadow: 2px 2px 2px black;
+}
+
+#viewDiv {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 0;
+}
+
+.AccidentsCountDiv {
+  position: absolute;
+  bottom: 2rem;
+  right: 1rem;
+  left: auto;
+  background-color: rgb(48, 48, 48, 0.5);
+  box-shadow: 0 1px 2px #0000004d;
+  align-items: center;
+  justify-content: center;
+}
+
+.AccidentsCountDivMobile {
+  position: absolute;
+  bottom: 2rem;
+  right: 1rem;
+  left: auto;
+  background-color: rgb(48, 48, 48, 0.5);
+  box-shadow: 0 1px 2px #0000004d;
+  align-items: center;
+  justify-content: center;
+}
+
+.AccidentsCountText {
+  color: #d1d1d1;
+  margin: 20px;
+  font-size: 1.2rem;
+}
+
+#slider {
+  position: absolute;
+  bottom: 4.5rem;
+  left: 20%;
+  right: 20%;
+  background-color: #222;
+  border: 1px solid #555;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.noUi-handle {
+  background-color: #222;
+  border: 1px solid #555;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.noUi-tooltip {
+  padding: 8px;
+  background-color: #555;
+  color: #fff;
+  border-radius: 5px;
+  font-size: 12px;
+}
+
+.noUi-value {
+  font-size: 22px;
+  color: #CCC;
+  text-shadow: 2px 2px 2px black;
+}
+
+#test {
+  position: absolute;
+  color: white;
+}
+
+.noUi-marker-large {
+  height: 16px !important;
+}
+
+.noUi-pips-horizontal {
+  height: 0px !important;
+}
+
+.noUi-marker {
+  height: 14px !important;
+}
+
+.active-pip {
+  font-weight: bold;
+  color: #fff;
+}
+
+.active-marker {
+  background-color: #fff;
+}
+
+.settings-slider {
+  background-color: #333;
+  border: 1px solid #555;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.settings-content {
+  width: 22rem;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type='checkbox'] {
+  accent-color: #555;
+}
+
+.credits-div {
+  position: absolute;
+  bottom: 2px;
+  left: 2px;
+  color: gray;
+  font-size: 9px;
+}
+
+.filter-div {
+  display: flex;
+  align-items: center;
+  margin: 10px;
+  margin-bottom: 10px;
+}
+
+.filrer-paragraph {
+  font-size: 18px;
+  margin-right: 10px;
+  margin-top: 7px;
+  margin-bottom: 0px;
+}
+
+.filter-select {
+  margin-left: auto;
+  padding-right: 0.1rem;
+  width: 60%;
+  font-size: 18px;
+  border-radius: 3px;
+  border: 1px solid #333333;
+  background: #242424;
+  color: #FFF;
+}
+
+.filter-break-line {
+  border-color: #555;
+  margin-left: 10px;
+  margin-right: 10px;
+  margin-bottom: 10px;
+  margin-top: 0px;
+}
+
+.slider-settings-label {
+  margin: 10px;
+  padding-left: 10px;
+}
+
+.slider-settings-title {
+  margin: 10px;
+  padding-left: 10px;
+  margin-bottom: 10px;
+  font-size: 18px;
+}
+
+.all-date-button-div-3D {
+  margin: 10px;
+  margin-left: 20px;
+  margin-right: 20px;
+  margin-top: 0px;
+  padding-left: 10px;
+  display: flex;
+  align-items: center;
+  background: #1e1e1e;
+  border: 1px solid #333333;
+  border-radius: 5px;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.all-date-button-div-2D {
+  margin: 10px;
+  margin-left: 20px;
+  margin-right: 20px;
+  margin-top: 0px;
+  padding-left: 10px;
+  display: flex;
+  align-items: center;
+  background: #242424;
+  border: 1px solid #333333;
+  border-radius: 5px;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.all-date-label {
+  margin-left: 5px;
+  cursor: pointer;
+  font-size: 18px;
+  top: 12px;
+}
+
+
+@media (min-width: 768px) and (max-width: 1450px) {
+  .AccidentsCountDiv {
+    position: absolute;
+    left: 83%;
+    right: 1%;
+  }
+
+  .AccidentsCountText {
+    color: #d1d1d1;
+    margin: 15px;
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 767px) {
+  .mobile-splash {
+    display: block;
+  }
+
+  #header {
+    display: none;
+  }
+
+  .AccidentsCountDiv {
+    position: absolute;
+    bottom: 6rem;
+    left: 1rem;
+    right: auto;
+  }
+
+  .AccidentsCountDivMobile {
+    position: absolute;
+    bottom: 2rem;
+    left: 1rem;
+    right: auto;
+  }
+
+  .AccidentsCountText {
+    color: #d1d1d1;
+    margin: 15px;
+    font-size: 12px;
+  }
+
+  #slider {
+    left: 2rem;
+    right: 2rem;
+    bottom: 4rem;
+  }
+
+  .noUi-value {
+    font-size: 15px;
+  }
+
+  .noUi-marker {
+    height: 9px !important;
+  }
+
+  .noUi-marker-large {
+    height: 10px !important;
+  }
+
+  .settings-content {
+    width: 20rem;
+  }
+
+}
+
+
+@media (max-width: 545px) {
+  .settings-content {
+    width: auto;
+  }
+
+  .esri-expand__container,
+  .esri-expand__container--expanded {
+    max-height: 75%;
+  }
+}
