@@ -301,7 +301,7 @@ export default function Map2D({ map, setMap, clicked, setClicked, sliderValue, i
         }
 
     }, [viewState, currentExtent, accidentsLayer, heatmapLayer, limit, isAllDate,
-        currentExtent, accidentType, month, brand, timeOfDay, voivodeship, carType, typeOfArea]);
+        accidentType, month, brand, timeOfDay, voivodeship, carType, typeOfArea]);
 
 
     // useEffect(() => {

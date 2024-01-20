@@ -46,7 +46,7 @@ export default function Settings2D({
                         <option value="Zderzenie pojazdów czołowe">Zderzenie pojazdów czołowe</option>
                         <option value="Zdarzenie z osobą UWR">Zdarzenie z osobą UWR</option>
                         <option value="Najechanie na pojazd unieruchomiony">Najechanie na pojazd unieruchomiony</option>
-                        <option value="Najechanie na drzewo, słup, inny obiekt drogowy">Najechanie na drzewo, słup, inny obiekt drogowy</option>
+                        {/* <option value="Najechanie na drzewo, słup, inny obiekt drogowy">Najechanie na drzewo, słup, inny obiekt drogowy</option> */}
                         <option value="Najechanie na drzewo">Najechanie na drzewo</option>
                         <option value="Najechanie na słup, znak">Najechanie na słup, znak</option>
                         <option value="Najechanie na zapore kolejową">Najechanie na zapore kolejową</option>
@@ -80,8 +80,8 @@ export default function Settings2D({
                         <option value="NISSAN">Nissan</option>
                         <option value="MAZDA">Mazda</option>
                         <option value="MITSUBISHI">Mitsubishi</option>
-                        <option value="Brak">Nieokreślony</option>
-                        <option value="Inne">Inne</option>
+                        <option value="Brak">Brak</option>
+                        <option value="Inna">Inna</option>
                     </Select>
                     <hr className="filter-break-line" />
                     <Select handleChange={setCarType} currentValue={carType} title="Typ Pojazdu">

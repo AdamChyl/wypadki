@@ -5,7 +5,7 @@ import HeightSlider from "../Sliders/HeightSlider/HeightSlider";
 import PercentileSlider from "../Sliders/PercentileSlider/PercentileSlider";
 import WidthSlider from "../Sliders/WidthSlider/WidthSlider";
 
-export default function Settings3D({ lowerPercentile, setLowerPercentile, setIsExpanded, handleChange, sliderValue, setIsAllDate, isAllDate, setHeight, height, setUpperPercentile, upperPercentile }) {
+export default function Settings3D({ setLowerPercentile, setIsExpanded, setWidth, width, setIsAllDate, isAllDate, setHeight, height, setUpperPercentile }) {
 
   const containerRef = useRef(null);
   const [expandBool, setExpandBool] = useState(false);
@@ -46,8 +46,8 @@ export default function Settings3D({ lowerPercentile, setLowerPercentile, setIsE
         </div>
 
         <p className="slider-settings-title" >Szerokość:</p>
-        <WidthSlider handleChange={handleChange} />
-        <p className="slider-settings-label" >Wybrana szerokość: <b>{Number(sliderValue).toFixed(0)}</b> metrów</p>
+        <WidthSlider handleChange={setWidth} />
+        <p className="slider-settings-label" >Wybrana szerokość: <b>{Number(width).toFixed(0)}</b> metrów</p>
 
         <hr className="filter-break-line" />
 

@@ -94,7 +94,7 @@ export default function Map3D({
 
   const [upperPercentile, setUpperPercentile] = useState(100);
   const [lowerPercentile, setLowerPercentile] = useState(1);
-  const [settingsSliderValue, setSettingsSliderValue] = useState(400);
+  const [width, setWidth] = useState(400);
   const [height, setHeight] = useState(1500);
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -121,7 +121,7 @@ export default function Map3D({
       pickable: true,
       autoHighlight: true,
       getPosition: d => d,
-      radius: settingsSliderValue,
+      radius: width,
       upperPercentile,
       lowerPercentile,
       material,
@@ -148,8 +148,8 @@ export default function Map3D({
       <Settings3D
         isExpanded={isExpanded}
         setIsExpanded={setIsExpanded}
-        handleChange={setSettingsSliderValue}
-        sliderValue={settingsSliderValue}
+        setWidth={setWidth}
+        width={width}
         setIsAllDate={setIsAllDate}
         isAllDate={isAllDate}
         height={height}
