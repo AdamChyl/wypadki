@@ -24,7 +24,7 @@ export default function Map2D({ map, setMap, clicked, setClicked, sliderValue, i
     const [voivodeship, setVoivodeship] = useState("all");
 
     const [accidentsLayer, setAccidentsLayer] = useState(null);
-    const [heatmapLayer, setHeatmapLayer] = useState(null);
+    // const [heatmapLayer, setHeatmapLayer] = useState(null);
     const [viewState, setView] = useState(null);
     const [currentExtent, setCurrentExtent] = useState(null);
     const [accidentsCount, setAccidentsCount] = useState(null);
@@ -50,32 +50,6 @@ export default function Map2D({ map, setMap, clicked, setClicked, sliderValue, i
 
         setView(view);
 
-        let zoom = new Zoom({
-            view: view,
-        });
-
-        let layerList = new LayerList({
-            view: view
-        });
-
-        let layerListExpand = new Expand({
-            expandIcon: "layers",
-            expandTooltip: "Warstwy",
-            view: view,
-            content: layerList
-        });
-
-        let legend = new Legend({
-            view: view
-        });
-
-        let legendListExpand = new Expand({
-            expandIcon: "legend",
-            view: view,
-            content: legend,
-            expandTooltip: "Legenda"
-        });
-
         let searchWidget = new Search({
             view: view
         });
@@ -100,13 +74,8 @@ export default function Map2D({ map, setMap, clicked, setClicked, sliderValue, i
         view.when(() => {
 
             setAccidentsLayer(webMap.layers.find(layer => layer.title === "Wypadki"))
-            setHeatmapLayer(webMap.layers.find(layer => layer.title === "Heatmap"))
 
-            // const accidents = webMap.layers.find(layer => layer.title === "Wypadki")
-            // const heatmap = webMap.layers.find(layer => layer.title === "Heatmap")
-
-            // accidents.visible = false;
-            // heatmap.visible = false;
+            // setHeatmapLayer(webMap.layers.find(layer => layer.title === "Heatmap"))
 
             // view.ui.add(zoom, {
             //     position: "top-right"
@@ -168,15 +137,6 @@ export default function Map2D({ map, setMap, clicked, setClicked, sliderValue, i
             additionalWidget.appendChild(iconSpan);
 
             view.ui.add(additionalWidget, "top-right");
-
-            view.ui.add(layerListExpand, {
-                position: "top-right"
-            });
-
-            view.ui.add(legendListExpand, {
-                position: "top-right"
-            });
-
 
             view.ui.add(searchWidgetExpand, {
                 position: "top-right"
@@ -290,7 +250,7 @@ export default function Map2D({ map, setMap, clicked, setClicked, sliderValue, i
             }
 
             accidentsLayer.definitionExpression = whereClause;
-            heatmapLayer.definitionExpression = whereClause;
+            // heatmapLayer.definitionExpression = whereClause;
 
             const queryExtent = accidentsLayer.createQuery();
             queryExtent.geometry = viewState.extent;
@@ -300,7 +260,7 @@ export default function Map2D({ map, setMap, clicked, setClicked, sliderValue, i
             })
         }
 
-    }, [viewState, currentExtent, accidentsLayer, heatmapLayer, limit, isAllDate,
+    }, [viewState, currentExtent, accidentsLayer, limit, isAllDate,
         accidentType, month, brand, timeOfDay, voivodeship, carType, typeOfArea]);
 
 
@@ -320,9 +280,9 @@ export default function Map2D({ map, setMap, clicked, setClicked, sliderValue, i
         setClicked((prev) => !prev);
     }
 
-    if (heatmapLayer) {
-        heatmapLayer.popupTemplate = null;
-    }
+    // if (heatmapLayer) {
+    //     heatmapLayer.popupTemplate = null;
+    // }
 
     return (
         <>
