@@ -70,6 +70,28 @@ body {
   justify-content: center;
 }
 
+.charts-div {
+  position: absolute;
+  left: 1rem;
+  right: 85%;
+  bottom: 2rem;
+  top: 2rem;
+  background-color: rgb(48, 48, 48, 0.5);
+  box-shadow: 0 1px 2px #0000004d;
+  color: white;
+  justify-content: center;
+  align-items: center;
+}
+
+.inner-charts-div {
+  text-align: center;
+}
+
+.charts-desc {
+  text-align: center;
+  margin-bottom: 0px;
+}
+
 .AccidentsCountDivMobile {
   position: absolute;
   bottom: 2rem;
@@ -199,6 +221,14 @@ input[type='checkbox'] {
   color: #FFF;
 }
 
+.render-select{
+  font-size: 15px;
+  border-radius: 3px;
+  border: 1px solid #333333;
+  background: #242424;
+  color: #FFF;
+}
+
 .filter-break-line {
   border-color: #555;
   margin-left: 10px;
@@ -269,9 +299,14 @@ input[type='checkbox'] {
     margin: 15px;
     font-size: 1rem;
   }
+
 }
 
 @media (max-width: 767px) {
+  .mobile-charts {
+    display: none;
+  }
+
   .mobile-splash {
     display: block;
   }

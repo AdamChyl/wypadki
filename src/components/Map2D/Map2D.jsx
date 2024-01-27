@@ -11,6 +11,10 @@ import AccidentsCount from '../AccidentsCount/AccidentsCount';
 import Header from "../Header/Header";
 import Settings2D from '../Settings2D/Settings2D';
 import SplashScreenWidget from '../Splash/SplashScreenWidget/SplashScreenWidget';
+import { processStatisticsResult } from "../../utils/utils";
+import { limitRenderer, areaRenderer, eventTypeRenderer, brandRenderer, vechicleRenderer, dayTimeRenderer, monthRenderer } from "../../utils/renderers";
+import RendererSelector from "../RendererSelector/RendererSelector";
+import Charts from "../Charts/Charts";
 
 export default function Map2D({ map, setMap, clicked, setClicked, sliderValue, isAllDate, setIsAllDate }) {
 
@@ -24,11 +28,17 @@ export default function Map2D({ map, setMap, clicked, setClicked, sliderValue, i
     const [voivodeship, setVoivodeship] = useState("all");
 
     const [accidentsLayer, setAccidentsLayer] = useState(null);
-    // const [heatmapLayer, setHeatmapLayer] = useState(null);
     const [viewState, setView] = useState(null);
     const [currentExtent, setCurrentExtent] = useState(null);
     const [accidentsCount, setAccidentsCount] = useState(null);
+    const [defaultRenderer, setDefaultRenderer] = useState(null);
+
+    const [brandsStatistics, setBrandsStatistics] = useState(null);
+    const [accidentTypeStatistics, setAccidentTypeStatistics] = useState(null);
+    const [vechicleType, setVechicleType] = useState(null);
+
     const containerRef2D = useRef(null);
+    const rendererInputRef = useRef(null);
 
     useEffect(() => {
         const webMap = new WebMap({
@@ -69,21 +79,37 @@ export default function Map2D({ map, setMap, clicked, setClicked, sliderValue, i
             container: containerRef2D.current
         });
 
+        var contentRenderer = document.getElementById('rendererContent');
+
+        let renderer = new Expand({
+            expandIconClass: 'esri-icon-maps',
+            expandTooltip: 'Symbolizacja',
+            content: contentRenderer,
+            container: rendererInputRef.current
+        });
+
+        let legend = new Legend({
+            view: view
+          });
+
+        let legendExpand = new Expand({
+            expandIconClass: 'esri-icon-legend',
+            expandTooltip: 'Legenda',
+            content: legend,
+        });
+
+
         view.ui.padding = { left: 15, top: 30, right: 15, bottom: 15 };
 
         view.when(() => {
 
             setAccidentsLayer(webMap.layers.find(layer => layer.title === "Wypadki"))
-
-            // setHeatmapLayer(webMap.layers.find(layer => layer.title === "Heatmap"))
-
-            // view.ui.add(zoom, {
-            //     position: "top-right"
-            //   });
+            setDefaultRenderer(webMap.layers.find(layer => layer.title === "Wypadki").renderer);
 
             view.ui.add(Map2DSettingsExpand, {
                 position: "top-right"
             });
+
 
             const mapChangeButton = document.createElement("div");
             mapChangeButton.id = "mapChangeButton";
@@ -138,9 +164,11 @@ export default function Map2D({ map, setMap, clicked, setClicked, sliderValue, i
 
             view.ui.add(additionalWidget, "top-right");
 
-            view.ui.add(searchWidgetExpand, {
-                position: "top-right"
-            });
+            view.ui.add(searchWidgetExpand, "top-right");
+
+            view.ui.add(renderer, "top-right");
+
+            view.ui.add(legendExpand, "top-right");
 
             const extentWatchHandle = reactiveUtils.when(
                 () => view.stationary === true,
@@ -250,7 +278,6 @@ export default function Map2D({ map, setMap, clicked, setClicked, sliderValue, i
             }
 
             accidentsLayer.definitionExpression = whereClause;
-            // heatmapLayer.definitionExpression = whereClause;
 
             const queryExtent = accidentsLayer.createQuery();
             queryExtent.geometry = viewState.extent;
@@ -258,38 +285,82 @@ export default function Map2D({ map, setMap, clicked, setClicked, sliderValue, i
             accidentsLayer.queryFeatureCount(queryExtent).then(count => {
                 setAccidentsCount(count);
             })
+
+            const queryBrandsExtent = accidentsLayer.createQuery();
+            queryBrandsExtent.geometry = viewState.extent;
+
+            queryBrandsExtent.where = whereClause;
+            queryBrandsExtent.outFields = ["Marka_sprawcy"];
+
+            queryBrandsExtent.groupByFieldsForStatistics = "Marka_sprawcy";
+            queryBrandsExtent.outStatistics = [{
+                statisticType: 'count',
+                onStatisticField: 'Marka_sprawcy',
+                outStatisticFieldName: 'Count'
+            }];
+
+            accidentsLayer.queryFeatures(queryBrandsExtent).then(result => {
+                setBrandsStatistics(processStatisticsResult(result, "Marka_sprawcy"));
+            })
+
+
+            const queryAccidentTypeExtent = accidentsLayer.createQuery();
+            queryAccidentTypeExtent.geometry = viewState.extent;
+
+            queryAccidentTypeExtent.where = whereClause;
+            queryAccidentTypeExtent.outFields = ["Rodzaj_zdarzenia"];
+
+            queryAccidentTypeExtent.groupByFieldsForStatistics = "Rodzaj_zdarzenia";
+            queryAccidentTypeExtent.outStatistics = [{
+                statisticType: 'count',
+                onStatisticField: 'Rodzaj_zdarzenia',
+                outStatisticFieldName: 'Count'
+            }];
+
+            accidentsLayer.queryFeatures(queryAccidentTypeExtent).then(result => {
+                setAccidentTypeStatistics(processStatisticsResult(result, "Rodzaj_zdarzenia"));
+            })
+
+            const queryVechicleTypeExtent = accidentsLayer.createQuery();
+            queryVechicleTypeExtent.geometry = viewState.extent;
+
+            queryVechicleTypeExtent.where = whereClause;
+            queryVechicleTypeExtent.outFields = ["Rodzaj_pojazdu"];
+
+            queryVechicleTypeExtent.groupByFieldsForStatistics = "Rodzaj_pojazdu";
+            queryVechicleTypeExtent.outStatistics = [{
+                statisticType: 'count',
+                onStatisticField: 'Rodzaj_pojazdu',
+                outStatisticFieldName: 'Count'
+            }];
+
+            accidentsLayer.queryFeatures(queryVechicleTypeExtent).then(result => {
+                setVechicleType(processStatisticsResult(result, "Rodzaj_pojazdu"));
+            })
         }
 
     }, [viewState, currentExtent, accidentsLayer, limit, isAllDate,
         accidentType, month, brand, timeOfDay, voivodeship, carType, typeOfArea]);
 
-
-    // useEffect(() => {
-    //     if (accidentsLayer) {
-    //         const queryExtent = accidentsLayer.createQuery();
-    //         queryExtent.geometry = viewState.extent;
-
-    //         accidentsLayer.queryFeatureCount(queryExtent).then(count => {
-    //             setAccidentsCount(count);
-    //         }).catch(error => {
-    //         });
-    //     }
-    // }, [viewState, currentExtent]);
-
     function handleClick() {
         setClicked((prev) => !prev);
     }
 
-    // if (heatmapLayer) {
-    //     heatmapLayer.popupTemplate = null;
-    // }
+    const handleRendererChange = (renderer) => {
+        if (accidentsLayer) {
+            accidentsLayer.renderer = renderer;
+        }
+    };
 
     return (
         <>
             <div id="viewDiv"></div>
-            <Header position="left">Mapa Wypadków 2D</Header>
+            {/* <Header position="left">Mapa Wypadków 2D</Header> */}
             <SplashScreenWidget className={clicked ? "" : "hide"} onClick={handleClick} map={map}></SplashScreenWidget>
-
+            <Charts brandsStatistics={brandsStatistics} accidentTypeStatistics={accidentTypeStatistics} vechicleType={vechicleType} />
+            <div ref={rendererInputRef}>
+                <RendererSelector onRendererChange={handleRendererChange} defaultRenderer={defaultRenderer}/>
+            </div>
             <div ref={containerRef2D} className='widget-container' >
                 <Settings2D
                     isAllDate={isAllDate}
