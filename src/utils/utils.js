@@ -29,7 +29,7 @@ export const brandColors = {
     "MITSUBISHI": '#7CB342',
     "TOYOTA": '#D81B60',
     "RENAULT": '#005CBF',
-    "AUDI": '#5D4037',
+    "AUDI": '#795548',
     "NISSAN": '#AD1457',
     "MAZDA": '#6A1B9A',
     "CITROEN": '#FFC400',
@@ -38,28 +38,28 @@ export const brandColors = {
     "FORD": '#FF6F00',
     "PEUGEOT": '#AD1457',
     "BRAK": '#BDBDBD',
-    "Inna": '#FF6F00',
+    "Inna": '#BDBDBD',
 };
 
 export const eventColors = {
-    "Najechanie na barierę ochronną": '#cab2d6',
-    "Najechanie na drzewo": '#b2df8a',
-    "Najechanie na dziurę, wybój, garb": '#fdbf6f',
-    "Najechanie na pieszego": '#e31a1c',
-    "Najechanie na pojazd unieruchomiony": '#fdbf6f',
-    "Najechanie na słup, znak": '#fb9a99',
-    "Najechanie na zapore kolejową": '#33a02c',
-    "Najechanie na zwierzę": '#ff7f00',
-    "Wypadek z pasażerem": '#fb9a99',
-    "Wywrócenie się pojazdu": '#b2df8a',
-    "Zderzenie pojazdów boczne": '#1f78b4',
-    "Zderzenie pojazdów czołowe": '#ff7fd0',
-    "Zderzenie pojazdów tylne": '#33a02c',
-    "Zdarzenie z osobą UWR": '#cab2d6',
-    "Inne": '#a6cee3',
-  };
+    "Najechanie na barierę ochronną": '#D8BFD8',
+    "Najechanie na drzewo": '#8FBC8F',
+    "Najechanie na dziurę, wybój, garb": '#FFD700',
+    "Najechanie na pieszego": '#B22222',
+    "Najechanie na pojazd unieruchomiony": '#FFD700',
+    "Najechanie na słup, znak": '#E9967A',
+    "Najechanie na zaporę kolejową": '#2E8B57',
+    "Najechanie na zwierzę": '#FFA500',
+    "Wypadek z pasażerem": '#E9967A',
+    "Wywrócenie się pojazdu": '#8FBC8F',
+    "Zderzenie pojazdów boczne": '#1E90FF',
+    "Zderzenie pojazdów czołowe": '#FF69B4',
+    "Zderzenie pojazdów tylne": '#2E8B57',
+    "Zdarzenie z osobą UWR": '#D8BFD8',
+    "Inne": '#A6CEE3',
+};
 
-export const vehicleTypeColors = {
+  export const vehicleTypeColors = {
     "Autobus inny": '#FF5733',
     "Autobus komunikacji": '#8E44AD',
     "Brak": '#BDC3C7',
@@ -85,7 +85,7 @@ export const monthColors = {
     "10": "#fdbf6f",  // Październik
     "11": "#ff7f00",  // Listopad
     "12": "#999999"   // Grudzień
-  };
+};
 
 
 

@@ -6,7 +6,7 @@ const commonSymbol = {
     outline: {
       type: "simple-line",
       width: 0.75,
-      color: [92, 92, 92, 0.25]
+      color: [92, 92, 92, 0.5]
     }
   };
 
@@ -17,13 +17,13 @@ const commonSymbol = {
       type: "color",
       field: "Ograniczenie_predkosci",
       stops: [
-        { value: 20, color: "#084594" },
-        { value: 40, color: "#4292c6" },
-        { value: 60, color: "#6baed6" },
-        { value: 80, color: "#ffff00" },
-        { value: 100, color: "#fee0d2" },
-        { value: 120, color: "#fc9272" },
-        { value: 140, color: "#de2d26" }
+        { value: 20, color: "#2e5930" },
+        { value: 40, color: "#467c47" },
+        { value: 60, color: "#699e69" },
+        { value: 80, color: "#ccaa00" },
+        { value: 100, color: "#cc6666" },
+        { value: 120, color: "#cc3333" },
+        { value: 140, color: "#993333" }
       ]
     }]
   };
@@ -34,11 +34,11 @@ const commonSymbol = {
     uniqueValueInfos: [
       {
         value: "Obszar Miejski",
-        symbol: { ...commonSymbol, color: "#d73027" }
+        symbol: { ...commonSymbol, color: "#cc3333"}
       },
       {
         value: "Obszar Wiejski",
-        symbol: { ...commonSymbol, color: "#91cf60" }
+        symbol: { ...commonSymbol, color: "#467c47" }
       }
     ]
   };

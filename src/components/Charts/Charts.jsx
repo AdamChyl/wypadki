@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import Chart from 'chart.js/auto';
+import { Chart } from 'chart.js/auto';
 import { brandColors, eventColors, vehicleTypeColors } from '../../utils/utils';
 
 export default function Charts({ brandsStatistics, accidentTypeStatistics, vechicleType }) {
@@ -30,13 +30,14 @@ export default function Charts({ brandsStatistics, accidentTypeStatistics, vechi
           }],
         },
         options: {
+          responsive: true,
           plugins: {
             legend: {
               position: 'bottom',
               labels: {
                 color: 'white',
                 font: {
-                  size: 10,
+                  size: 8,
                 },
               },
             },
@@ -81,13 +82,14 @@ export default function Charts({ brandsStatistics, accidentTypeStatistics, vechi
             }],
           },
           options: {
+            responsive: true,
             plugins: {
               legend: {
                 position: 'bottom',
                 labels: {
                   color: 'white',
                   font: {
-                    size: 10,
+                    size: 8,
                   },
                 },
               },
@@ -133,13 +135,14 @@ export default function Charts({ brandsStatistics, accidentTypeStatistics, vechi
             }],
           },
           options: {
+            responsive: true,
             plugins: {
               legend: {
                 position: 'bottom',
                 labels: {
                   color: 'white',
                   font: {
-                    size: 10,
+                    size: 8,
                   },
                 },
               },
@@ -185,13 +188,14 @@ export default function Charts({ brandsStatistics, accidentTypeStatistics, vechi
             }],
           },
           options: {
+            responsive: true,
             plugins: {
               legend: {
                 position: 'bottom',
                 labels: {
                   color: 'white',
                   font: {
-                    size: 10,
+                    size: 8,
                   },
                 },
               },
@@ -204,18 +208,18 @@ export default function Charts({ brandsStatistics, accidentTypeStatistics, vechi
 
   return (
     <div className="mobile-charts">
-    <div className="charts-div">
-      <div className='inner-charts-div'>
-        <h3 className='charts-desc'>Sprawca</h3>
-        <canvas ref={chartBrandRef} className='charts'></canvas>
-        <hr className="filter-break-line" style={{ marginTop: "10px"}} />
-        <h3 className='charts-desc'>Zdarzenie</h3>
-        <canvas ref={chartAccidentTypeRef} className='charts'></canvas>
-        <hr className="filter-break-line" style={{ marginTop: "10px"}} />
-        <h3 className='charts-desc'>Typ Pojazdu</h3>
-        <canvas ref={chartVehicleTypeRef} className='charts'></canvas>
+      <div className="charts-div">
+        <div className='inner-charts-div'>
+        <h4 className='charts-desc'>Sprawca</h4>
+          <canvas ref={chartBrandRef} className='charts'></canvas>
+        <hr className="filter-break-line" style={{ marginTop: "10px" }} />
+        <h4 className='charts-desc'>Zdarzenie</h4>
+          <canvas ref={chartAccidentTypeRef} className='charts'></canvas>
+        <hr className="filter-break-line" style={{ marginTop: "10px" }} />
+        <h4 className='charts-desc'>Typ Pojazdu</h4>
+          <canvas ref={chartVehicleTypeRef} className='charts'></canvas>
+        </div>
       </div>
-    </div>
     </div>
   );
 }

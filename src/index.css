@@ -71,29 +71,35 @@ body {
 }
 
 .charts-div {
+  padding:10px;
   position: absolute;
   left: 1rem;
-  right: 85%;
-  height: auto;
-  bottom: 2rem;
-  top: 2rem;
+  right:87%;
+  bottom: 1rem;
+  top: 1rem;
   background-color: rgb(0, 0, 0, 0);
+  color: white;
   justify-content: center;
   align-items: center;
   display: flex;
+  flex-direction: column;
 }
 
 .inner-charts-div {
-  width: 100%;
-  text-align: center;
-  position: relative;
   background-color: rgb(48, 48, 48, 0.5);
   box-shadow: 0 1px 2px #0000004d;
-  color: white;
+  padding: 10px;
+  position: relative;
+  width: 100%;
+  max-width: 100%;
 }
 
 .charts {
-  max-width: 100%;
+  align-items: center !important;
+  text-align: center !important;
+  position: relative;
+  height: auto !important;
+
 }
 
 .charts-desc {
@@ -293,6 +299,24 @@ input[type='checkbox'] {
   cursor: pointer;
   font-size: 18px;
   top: 12px;
+}
+
+@media (min-height: 800px) {
+  .charts-div {
+    padding:10px;
+    position: absolute;
+    left: 1rem;
+    right:85%;
+    bottom: 1rem;
+    top: 1rem;
+    background-color: rgb(0, 0, 0, 0);
+    color: white;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+  }
+
 }
 
 
