@@ -74,6 +74,7 @@ body {
   position: absolute;
   left: 1rem;
   right: 85%;
+  height: auto;
   bottom: 2rem;
   top: 2rem;
   background-color: rgb(48, 48, 48, 0.5);
@@ -81,10 +82,17 @@ body {
   color: white;
   justify-content: center;
   align-items: center;
+  display: flex;
 }
 
 .inner-charts-div {
+  width: 100%;
   text-align: center;
+  position: relative;
+}
+
+.charts {
+  max-width: 100%;
 }
 
 .charts-desc {
