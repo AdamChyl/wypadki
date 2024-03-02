@@ -18,7 +18,7 @@ export default function Settings3D({ setLowerPercentile, setIsExpanded, setWidth
       expandTooltip: 'Ustawienia',
       content: content,
       expanded: expandBool,
-      container: containerRef.current
+      container: containerRef.current,
     });
 
     const watchHandler = () => {

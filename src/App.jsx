@@ -9,7 +9,6 @@ import DATA_URL from '/coords.csv?url';
 
 function App() {
 
-
   const [coords, setCoords] = useState([]);
   const [map, setMap] = useState('3D');
   const [clicked, setClicked] = useState(true);

@@ -9,7 +9,7 @@ const SplashScreenWidget = ({ className, onClick, map }) => {
         <div className='column-17'>
           <div className='card card-wide'>
             <div className='card-content'>
-              <h4 className='trailer-half header'>Iteraktywna mapa wypadków drogowych (WERSJA BETA)</h4>
+              <h4 className='trailer-half header'>Iteraktywna mapa wypadków drogowych</h4>
               <div className='font-size--1 trailer-half'>
                 Przeglądaj i odkrywaj miejsca zdarzeń, identyfikuj najniebezpieczniejsze lokalizacje,
                 filtruj dane, analizuj statystyki i zwiększ świadomość społeczną w zakresie bezpieczeństwa drogowego.<br />

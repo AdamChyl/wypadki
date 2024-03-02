@@ -11,7 +11,7 @@ import AccidentsCount from '../AccidentsCount/AccidentsCount';
 import Header from "../Header/Header";
 import Settings2D from '../Settings2D/Settings2D';
 import SplashScreenWidget from '../Splash/SplashScreenWidget/SplashScreenWidget';
-import { processStatisticsResult } from "../../utils/utils";
+import { queryAndProcessStatistics } from "../../utils/utils";
 import { limitRenderer, areaRenderer, eventTypeRenderer, brandRenderer, vechicleRenderer, dayTimeRenderer, monthRenderer } from "../../utils/renderers";
 import RendererSelector from "../RendererSelector/RendererSelector";
 import Charts from "../Charts/Charts";
@@ -68,7 +68,8 @@ export default function Map2D({ map, setMap, clicked, setClicked, sliderValue, i
             expandIcon: "search",
             view: view,
             content: searchWidget,
-            expandTooltip: "Szukaj"
+            expandTooltip: "Szukaj",
+            group: "top-right"
         });
         var content = document.getElementById('content2D');
 
@@ -76,7 +77,8 @@ export default function Map2D({ map, setMap, clicked, setClicked, sliderValue, i
             expandIconClass: 'esri-icon-settings',
             expandTooltip: 'Ustawienia',
             content: content,
-            container: containerRef2D.current
+            container: containerRef2D.current,
+            group: "top-right"
         });
 
         var contentRenderer = document.getElementById('rendererContent');
@@ -85,17 +87,19 @@ export default function Map2D({ map, setMap, clicked, setClicked, sliderValue, i
             expandIconClass: 'esri-icon-maps',
             expandTooltip: 'Symbolizacja',
             content: contentRenderer,
-            container: rendererInputRef.current
+            container: rendererInputRef.current,
+            group: "top-right"
         });
 
         let legend = new Legend({
             view: view
-          });
+        });
 
         let legendExpand = new Expand({
             expandIconClass: 'esri-icon-legend',
             expandTooltip: 'Legenda',
             content: legend,
+            group: "top-right"
         });
 
 
@@ -103,13 +107,15 @@ export default function Map2D({ map, setMap, clicked, setClicked, sliderValue, i
 
         view.when(() => {
 
-            setAccidentsLayer(webMap.layers.find(layer => layer.title === "Wypadki"))
-            setDefaultRenderer(webMap.layers.find(layer => layer.title === "Wypadki").renderer);
+            const accidentsLayer = webMap.layers.find(layer => layer.title === "Wypadki");
+            setAccidentsLayer(accidentsLayer);
+            setDefaultRenderer(accidentsLayer.renderer);
+
+            accidentsLayer.renderer = limitRenderer;
 
             view.ui.add(Map2DSettingsExpand, {
                 position: "top-right"
             });
-
 
             const mapChangeButton = document.createElement("div");
             mapChangeButton.id = "mapChangeButton";
@@ -194,149 +200,54 @@ export default function Map2D({ map, setMap, clicked, setClicked, sliderValue, i
 
                 whereClause = `rok = '${sliderValue}'`;
 
-                if (limit !== 'all') {
-                    whereClause += ` AND Ograniczenie_predkosci = '${limit}'`;
-                }
+                const conditions = [
+                    { condition: limit !== 'all', expression: `Ograniczenie_predkosci = '${limit}'` },
+                    { condition: accidentType !== 'all', expression: `Rodzaj_zdarzenia = '${accidentType}'` },
+                    { condition: month !== 'all', expression: `Miesiac = '${month}'` },
+                    { condition: brand !== 'all', expression: `Marka_sprawcy = '${brand}'` },
+                    { condition: timeOfDay !== 'all', expression: `Pora_dnia = '${timeOfDay}'` },
+                    { condition: voivodeship !== 'all', expression: `Województwo = '${voivodeship}'` },
+                    { condition: carType !== 'all', expression: `Rodzaj_pojazdu = '${carType}'` },
+                    { condition: typeOfArea !== 'all', expression: `Rodzaj_obszaru = '${typeOfArea}'` },
+                ];
 
-                if (accidentType !== 'all') {
-                    whereClause += ` AND Rodzaj_zdarzenia = '${accidentType}'`;
-                }
-
-                if (month !== 'all') {
-                    whereClause += ` AND Miesiac = '${month}'`;
-                }
-
-                if (brand !== 'all') {
-                    whereClause += ` AND Marka_sprawcy = '${brand}'`;
-                }
-
-                if (timeOfDay !== 'all') {
-                    whereClause += ` AND Pora_dnia = '${timeOfDay}'`;
-                }
-
-                if (voivodeship !== 'all') {
-                    whereClause += ` AND Województwo = '${voivodeship}'`;
-                }
-
-                if (carType !== 'all') {
-                    whereClause += ` AND Rodzaj_pojazdu = '${carType}'`;
-                }
-
-                if (typeOfArea !== 'all') {
-                    whereClause += ` AND Rodzaj_obszaru = '${typeOfArea}'`;
-                }
-
-
+                conditions.forEach(({ condition, expression }) => {
+                    if (condition) {
+                        whereClause += (whereClause.length === 0 ? '' : ' AND ') + expression;
+                    }
+                });
             } else {
+                const conditions = [
+                    { condition: limit !== 'all', expression: `Ograniczenie_predkosci = ${limit}` },
+                    { condition: accidentType !== 'all', expression: `Rodzaj_zdarzenia = '${accidentType}'` },
+                    { condition: month !== 'all', expression: `Miesiac = '${month}'` },
+                    { condition: brand !== 'all', expression: `Marka_sprawcy = '${brand}'` },
+                    { condition: timeOfDay !== 'all', expression: `Pora_dnia = '${timeOfDay}'` },
+                    { condition: voivodeship !== 'all', expression: `Województwo = '${voivodeship}'` },
+                    { condition: carType !== 'all', expression: `Rodzaj_pojazdu = '${carType}'` },
+                    { condition: typeOfArea !== 'all', expression: `Rodzaj_obszaru = '${typeOfArea}'` },
+                ];
 
-                if (limit !== 'all' && whereClause.length === 0) {
-                    whereClause += `Ograniczenie_predkosci = ${limit}`;
-                } else if (limit !== 'all') {
-                    whereClause += ` AND Ograniczenie_predkosci = ${limit}`;
-                }
-
-                if (accidentType !== 'all' && whereClause.length === 0) {
-                    whereClause += `Rodzaj_zdarzenia = '${accidentType}'`;
-                } else if (accidentType !== 'all') {
-                    whereClause += ` AND Rodzaj_zdarzenia = '${accidentType}'`;
-                }
-
-                if (month !== 'all' && whereClause.length === 0) {
-                    whereClause += `Miesiac = '${month}'`;
-                } else if (month !== 'all') {
-                    whereClause += ` AND Miesiac = '${month}'`;
-                }
-
-                if (brand !== 'all' && whereClause.length === 0) {
-                    whereClause += `Marka_sprawcy = '${brand}'`;
-                } else if (brand !== 'all') {
-                    whereClause += ` AND Marka_sprawcy = '${brand}'`;
-                }
-
-                if (timeOfDay !== 'all' && whereClause.length === 0) {
-                    whereClause += `Pora_dnia = '${timeOfDay}'`;
-                } else if (timeOfDay !== 'all') {
-                    whereClause += ` AND Pora_dnia = '${timeOfDay}'`;
-                }
-
-                if (voivodeship !== 'all' && whereClause.length === 0) {
-                    whereClause += `Województwo = '${voivodeship}'`;
-                } else if (voivodeship !== 'all') {
-                    whereClause += ` AND Województwo = '${voivodeship}'`;
-                }
-                if (carType !== 'all' && whereClause.length === 0) {
-                    whereClause += ` Rodzaj_pojazdu = '${carType}'`;
-                } else if (carType !== 'all') {
-                    whereClause += ` AND Rodzaj_pojazdu = '${carType}'`;
-                }
-
-                if (typeOfArea !== 'all' && whereClause.length === 0) {
-                    whereClause += `Rodzaj_obszaru = '${typeOfArea}'`;
-                } else if (typeOfArea !== 'all') {
-                    whereClause += ` AND Rodzaj_obszaru = '${typeOfArea}'`;
-                }
+                conditions.forEach(({ condition, expression }) => {
+                    if (condition) {
+                        whereClause += (whereClause.length === 0 ? '' : ' AND ') + expression;
+                    }
+                });
             }
 
             accidentsLayer.definitionExpression = whereClause;
 
             const queryExtent = accidentsLayer.createQuery();
             queryExtent.geometry = viewState.extent;
+            queryExtent.where = whereClause;
 
             accidentsLayer.queryFeatureCount(queryExtent).then(count => {
                 setAccidentsCount(count);
-            })
+            });
 
-            const queryBrandsExtent = accidentsLayer.createQuery();
-            queryBrandsExtent.geometry = viewState.extent;
-
-            queryBrandsExtent.where = whereClause;
-            queryBrandsExtent.outFields = ["Marka_sprawcy"];
-
-            queryBrandsExtent.groupByFieldsForStatistics = "Marka_sprawcy";
-            queryBrandsExtent.outStatistics = [{
-                statisticType: 'count',
-                onStatisticField: 'Marka_sprawcy',
-                outStatisticFieldName: 'Count'
-            }];
-
-            accidentsLayer.queryFeatures(queryBrandsExtent).then(result => {
-                setBrandsStatistics(processStatisticsResult(result, "Marka_sprawcy"));
-            })
-
-
-            const queryAccidentTypeExtent = accidentsLayer.createQuery();
-            queryAccidentTypeExtent.geometry = viewState.extent;
-
-            queryAccidentTypeExtent.where = whereClause;
-            queryAccidentTypeExtent.outFields = ["Rodzaj_zdarzenia"];
-
-            queryAccidentTypeExtent.groupByFieldsForStatistics = "Rodzaj_zdarzenia";
-            queryAccidentTypeExtent.outStatistics = [{
-                statisticType: 'count',
-                onStatisticField: 'Rodzaj_zdarzenia',
-                outStatisticFieldName: 'Count'
-            }];
-
-            accidentsLayer.queryFeatures(queryAccidentTypeExtent).then(result => {
-                setAccidentTypeStatistics(processStatisticsResult(result, "Rodzaj_zdarzenia"));
-            })
-
-            const queryVechicleTypeExtent = accidentsLayer.createQuery();
-            queryVechicleTypeExtent.geometry = viewState.extent;
-
-            queryVechicleTypeExtent.where = whereClause;
-            queryVechicleTypeExtent.outFields = ["Rodzaj_pojazdu"];
-
-            queryVechicleTypeExtent.groupByFieldsForStatistics = "Rodzaj_pojazdu";
-            queryVechicleTypeExtent.outStatistics = [{
-                statisticType: 'count',
-                onStatisticField: 'Rodzaj_pojazdu',
-                outStatisticFieldName: 'Count'
-            }];
-
-            accidentsLayer.queryFeatures(queryVechicleTypeExtent).then(result => {
-                setVechicleType(processStatisticsResult(result, "Rodzaj_pojazdu"));
-            })
+            queryAndProcessStatistics("Marka_sprawcy", setBrandsStatistics, accidentsLayer, viewState, whereClause);
+            queryAndProcessStatistics("Rodzaj_zdarzenia", setAccidentTypeStatistics, accidentsLayer, viewState, whereClause);
+            queryAndProcessStatistics("Rodzaj_pojazdu", setVechicleType, accidentsLayer, viewState, whereClause);
         }
 
     }, [viewState, currentExtent, accidentsLayer, limit, isAllDate,
@@ -346,7 +257,7 @@ export default function Map2D({ map, setMap, clicked, setClicked, sliderValue, i
         setClicked((prev) => !prev);
     }
 
-    const handleRendererChange = (renderer) => {
+    function handleRendererChange(renderer) {
         if (accidentsLayer) {
             accidentsLayer.renderer = renderer;
         }
@@ -359,7 +270,7 @@ export default function Map2D({ map, setMap, clicked, setClicked, sliderValue, i
             <SplashScreenWidget className={clicked ? "" : "hide"} onClick={handleClick} map={map}></SplashScreenWidget>
             <Charts brandsStatistics={brandsStatistics} accidentTypeStatistics={accidentTypeStatistics} vechicleType={vechicleType} />
             <div ref={rendererInputRef}>
-                <RendererSelector onRendererChange={handleRendererChange} defaultRenderer={defaultRenderer}/>
+                <RendererSelector onRendererChange={handleRendererChange} defaultRenderer={defaultRenderer} />
             </div>
             <div ref={containerRef2D} className='widget-container' >
                 <Settings2D

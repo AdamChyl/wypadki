@@ -1,19 +1,30 @@
-export const processStatisticsResult = (result, fieldName) => {
-    const dictionary = {};
+export const queryAndProcessStatistics = (field, stateSetter, accidentsLayer, viewState, whereClause) => {
+    const query = accidentsLayer.createQuery();
+    query.geometry = viewState.extent;
+    query.where = whereClause;
+    query.outFields = [field];
+    query.groupByFieldsForStatistics = field;
+    query.outStatistics = [{
+        statisticType: 'count',
+        onStatisticField: field,
+        outStatisticFieldName: 'Count'
+    }];
 
-    if (result && result.features && result.features.length > 0) {
-        result.features.forEach(feature => {
-            const attributes = feature.attributes;
-            const fieldValue = attributes[fieldName];
-            const count = attributes["Count"];
+    accidentsLayer.queryFeatures(query).then(result => {
+        const dictionary = {};
+        if (result && result.features && result.features.length > 0) {
+            result.features.forEach(feature => {
+                const attributes = feature.attributes;
+                const fieldValue = attributes[field];
+                const count = attributes["Count"];
 
-            if (fieldValue && count !== undefined) {
-                dictionary[fieldValue] = count;
-            }
-        });
-    }
-
-    return dictionary;
+                if (fieldValue && count !== undefined) {
+                    dictionary[fieldValue] = count;
+                }
+            });
+        }
+        stateSetter(dictionary);
+    });
 };
 
 export const brandColors = {
