@@ -3,14 +3,14 @@ import { limitRenderer, areaRenderer, dayTimeRenderer, eventTypeRenderer, brandR
 
 export default function RendererSelector({ onRendererChange, defaultRenderer }) {
   const renderers = [
-    { label: 'Domyślna', value: 'default', renderer: defaultRenderer },
+    { label: 'Biała', value: 'default', renderer: defaultRenderer },
     { label: 'Ograniczenie prędkości', value: 'limit', renderer: limitRenderer },
-    { label: 'Obszar', value: 'area', renderer: areaRenderer },
+    { label: 'Typ obszaru', value: 'area', renderer: areaRenderer },
     { label: 'Pora dnia', value: 'dayTime', renderer: dayTimeRenderer },
-    { label: 'Rodzaj zdarzenia', value: 'eventType', renderer: eventTypeRenderer },
-    { label: 'Marka sprawcy', value: 'brand', renderer: brandRenderer },
-    { label: 'Rodzaj pojazdu', value: 'vechicle', renderer: vechicleRenderer },
-    { label: 'Miesiąc', value: 'month', renderer: monthRenderer }
+    // { label: 'Rodzaj zdarzenia', value: 'eventType', renderer: eventTypeRenderer },
+    // { label: 'Marka sprawcy', value: 'brand', renderer: brandRenderer },
+    // { label: 'Rodzaj pojazdu', value: 'vechicle', renderer: vechicleRenderer },
+    // { label: 'Miesiąc', value: 'month', renderer: monthRenderer }
   ];
 
   const [selectedRenderer, setSelectedRenderer] = useState(null);

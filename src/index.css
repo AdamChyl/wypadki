@@ -9,6 +9,7 @@ body {
   font-family: sans-serif;
   position: relative;
   overflow: hidden;
+  background-color: #303030;
 }
 
 .header-container {
@@ -52,11 +53,20 @@ body {
 
 #viewDiv {
   height: 100%;
-  width: 100%;
+  width: 85%;
   position: absolute;
   top: 0;
-  left: 0;
+  right: 0;
   z-index: 0;
+  outline: none;
+}
+
+#viewDiv:focus {
+  outline: none;
+}
+
+.esri-view .esri-view-surface--touch-none:focus::after {
+  outline: none !important;
 }
 
 .AccidentsCountDiv {
@@ -73,10 +83,11 @@ body {
 .charts-div {
   padding:10px;
   position: absolute;
-  left: 1rem;
-  right:87%;
-  bottom: 1rem;
-  top: 1rem;
+  margin: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 0;
   background-color: rgb(0, 0, 0, 0);
   color: white;
   justify-content: center;
@@ -86,9 +97,9 @@ body {
 }
 
 .inner-charts-div {
-  background-color: rgb(48, 48, 48, 0.5);
+  background-color: rgb(48, 48, 48, 1);
   box-shadow: 0 1px 2px #0000004d;
-  padding: 10px;
+  margin-right: 1rem;
   position: relative;
   width: 100%;
   max-width: 100%;
@@ -301,6 +312,65 @@ input[type='checkbox'] {
   top: 12px;
 }
 
+.refresh-button {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  border: 2px solid #fff;
+  background-color: #333;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 80px;
+  height: 80px;
+  color: white;
+  transition: background-color 0.3s ease;
+  position: absolute;
+  top: 20px;
+  left: 16%;
+  z-index: 1000;
+}
+
+.refresh-button:hover {
+  background-color: #555;
+}
+
+.refresh-button.clicked {
+  background-color: #0079c1;
+  color: white;
+}
+
+.refresh-button .esri-icon {
+  font-size: 36px;
+}
+
+.single-accidents-button {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  border: 2px solid #fff;
+  background-color: #333;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 180px;
+  height: 50px;
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+  transition: background-color 0.3s ease;
+  position: absolute;
+  top: 3.3rem;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+}
+
+.single-accidents-button:hover {
+  background-color: #555;
+}
+
 @media (min-height: 800px) {
   .charts-div {
     padding:10px;
@@ -336,6 +406,20 @@ input[type='checkbox'] {
 }
 
 @media (max-width: 767px) {
+  #viewDiv {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 0;
+    outline: none;
+  }
+
+  .refresh-button {
+    left: 0.5rem;
+  }
+
   .mobile-charts {
     display: none;
   }

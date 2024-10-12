@@ -1,0 +1,49 @@
+.alert-overlay {
+    z-index: 4999;
+    background-color: rgba(0, 0, 0, 0.6);
+    height: 100%;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.alert-card {
+    background-color: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    width: 300px;
+}
+
+.alert-header {
+    margin: 0;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.alert-content {
+    margin: 10px 0;
+}
+
+.alert-footer {
+    margin-top: 10px;
+}
+
+.alert-button {
+    background-color: #0079c1;
+    border: none;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.alert-button:hover {
+    background-color: #00598e;
+}

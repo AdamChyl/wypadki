@@ -39,13 +39,19 @@ const material = {
 };
 
 const INITIAL_VIEW_STATE = {
-  longitude: 19.87330368764314,
-  latitude: 50.8549967758753,
-  zoom: 6.790577937314907,
-  minZoom: 5,
+  width: 1920,
+  height: 945,
+  latitude: 51.242346893898414,
+  longitude: 22.975824623413267,
+  zoom: 7.886695771148812,
+  bearing: 46.78767395842363,
+  pitch: 56.96583378357565,
+  altitude: 1.5,
   maxZoom: 15,
-  pitch: 55.09607828582955,
-  bearing: 1.448818536736879,
+  minZoom: 5,
+  maxPitch: 60,
+  minPitch: 0,
+  position: [0, 0, 0]
 };
 
 

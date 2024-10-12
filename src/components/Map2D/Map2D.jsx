@@ -15,6 +15,7 @@ import { queryAndProcessStatistics } from "../../utils/utils";
 import { limitRenderer, areaRenderer, eventTypeRenderer, brandRenderer, vechicleRenderer, dayTimeRenderer, monthRenderer } from "../../utils/renderers";
 import RendererSelector from "../RendererSelector/RendererSelector";
 import Charts from "../Charts/Charts";
+import AlertSplash from "../AlertSplash/AlertSplash";
 
 export default function Map2D({ map, setMap, clicked, setClicked, sliderValue, isAllDate, setIsAllDate }) {
 
@@ -28,17 +29,25 @@ export default function Map2D({ map, setMap, clicked, setClicked, sliderValue, i
     const [voivodeship, setVoivodeship] = useState("all");
 
     const [accidentsLayer, setAccidentsLayer] = useState(null);
+    const [heatmapLayer, setHeatmapLayer] = useState(null);
     const [viewState, setView] = useState(null);
     const [currentExtent, setCurrentExtent] = useState(null);
     const [accidentsCount, setAccidentsCount] = useState(null);
     const [defaultRenderer, setDefaultRenderer] = useState(null);
+    const [isRendererVisible, setIsRendererVisible] = useState(true);
+
+    const [alertMessage, setAlertMessage] = useState("");
+    const [showAlertSplash, setShowAlertSplash] = useState(false);
 
     const [brandsStatistics, setBrandsStatistics] = useState(null);
     const [accidentTypeStatistics, setAccidentTypeStatistics] = useState(null);
     const [vechicleType, setVechicleType] = useState(null);
 
+    const [buttonText, setButtonText] = useState("Pojedyńcze wypadki");
+
     const containerRef2D = useRef(null);
     const rendererInputRef = useRef(null);
+    const refreshButtonRef = useRef(null);
 
     useEffect(() => {
         const webMap = new WebMap({
@@ -50,9 +59,8 @@ export default function Map2D({ map, setMap, clicked, setClicked, sliderValue, i
         const view = new MapView({
             map: webMap,
             container: "viewDiv",
-            zoom: 6,
-            // center: [22.667427, 51.160614]
-            center: [19.485405, 51.131697],
+            zoom: 11,
+            center: [22.595000, 51.225000],
             ui: {
                 components: ["attribution"]
             }
@@ -106,9 +114,12 @@ export default function Map2D({ map, setMap, clicked, setClicked, sliderValue, i
         view.ui.padding = { left: 15, top: 30, right: 15, bottom: 15 };
 
         view.when(() => {
-
             const accidentsLayer = webMap.layers.find(layer => layer.title === "Wypadki");
+            const heatmapLayer = webMap.layers.find(layer => layer.title === "Heatmap");
+            heatmapLayer.popupEnabled = false;
+
             setAccidentsLayer(accidentsLayer);
+            setHeatmapLayer(heatmapLayer);
             setDefaultRenderer(accidentsLayer.renderer);
 
             accidentsLayer.renderer = limitRenderer;
@@ -176,6 +187,24 @@ export default function Map2D({ map, setMap, clicked, setClicked, sliderValue, i
 
             view.ui.add(legendExpand, "top-right");
 
+            accidentsLayer.watch("renderer", () => {
+                // console.log("Renderer został zaktualizowany.");
+            });
+
+            accidentsLayer.watch("definitionExpression", () => {
+                // console.log("Definition Query został zaktualizowany.");
+            });
+
+            view.whenLayerView(accidentsLayer).then((layerView) => {
+                layerView.watch("updating", (isUpdating) => {
+                    if (isUpdating) {
+                        // console.log("Warstwa zaczyna się aktualizować.");
+                    } else {
+                        // console.log("Warstwa jest w pełni zaktualizowana.");
+                    }
+                });
+            });
+
             const extentWatchHandle = reactiveUtils.when(
                 () => view.stationary === true,
                 () => {
@@ -191,13 +220,12 @@ export default function Map2D({ map, setMap, clicked, setClicked, sliderValue, i
         };
     }, []);
 
-    useEffect(() => {
-        if (accidentsLayer) {
 
+    useEffect(() => {
+        if (accidentsLayer && heatmapLayer) {
             let whereClause = '';
 
             if (!isAllDate) {
-
                 whereClause = `rok = '${sliderValue}'`;
 
                 const conditions = [
@@ -236,22 +264,14 @@ export default function Map2D({ map, setMap, clicked, setClicked, sliderValue, i
             }
 
             accidentsLayer.definitionExpression = whereClause;
-
-            const queryExtent = accidentsLayer.createQuery();
-            queryExtent.geometry = viewState.extent;
-            queryExtent.where = whereClause;
-
-            accidentsLayer.queryFeatureCount(queryExtent).then(count => {
-                setAccidentsCount(count);
-            });
-
-            queryAndProcessStatistics("Marka_sprawcy", setBrandsStatistics, accidentsLayer, viewState, whereClause);
-            queryAndProcessStatistics("Rodzaj_zdarzenia", setAccidentTypeStatistics, accidentsLayer, viewState, whereClause);
-            queryAndProcessStatistics("Rodzaj_pojazdu", setVechicleType, accidentsLayer, viewState, whereClause);
+            heatmapLayer.definitionExpression = whereClause;
+            accidentsLayer.refresh();
+            heatmapLayer.refresh();
         }
+    }, [viewState, currentExtent, accidentsLayer, heatmapLayer, limit, isAllDate,
+        accidentType, month, brand, timeOfDay, voivodeship, carType, typeOfArea, sliderValue]);
 
-    }, [viewState, currentExtent, accidentsLayer, limit, isAllDate,
-        accidentType, month, brand, timeOfDay, voivodeship, carType, typeOfArea]);
+
 
     function handleClick() {
         setClicked((prev) => !prev);
@@ -260,6 +280,104 @@ export default function Map2D({ map, setMap, clicked, setClicked, sliderValue, i
     function handleRendererChange(renderer) {
         if (accidentsLayer) {
             accidentsLayer.renderer = renderer;
+        }
+    };
+
+    const [isClicked, setIsClicked] = useState(false);
+
+    const handleRefreshClick = () => {
+        if (isClicked) {
+            return;
+        }
+
+        if (viewState.zoom < 10) {
+            setAlertMessage("Statystyki nie są pobierane z takiego zbliżenia, zwiększ zbliżenie!");
+            setShowAlertSplash(true);
+            return;
+        }
+
+        setIsClicked(true);
+
+        const timeout = setTimeout(() => {
+            setAlertMessage("Wystąpił problem z uzyskaniem odpowiedzi od serwera o statystykach. Proszę spróbować ponownie później.");
+            setShowAlertSplash(true);
+            setIsClicked(false);
+        }, 60000);
+
+        if (accidentsLayer) {
+            let whereClause = '';
+
+            if (!isAllDate) {
+                whereClause = `rok = '${sliderValue}'`;
+            }
+
+            accidentsLayer.definitionExpression = whereClause;
+
+            const promises = [
+                queryAndProcessStatistics("Marka_sprawcy", setBrandsStatistics, accidentsLayer, viewState, whereClause),
+                queryAndProcessStatistics("Rodzaj_zdarzenia", setAccidentTypeStatistics, accidentsLayer, viewState, whereClause),
+                queryAndProcessStatistics("Rodzaj_pojazdu", setVechicleType, accidentsLayer, viewState, whereClause),
+                accidentsLayer.queryFeatureCount({
+                    geometry: viewState.extent,
+                    where: whereClause
+                }).then(count => {
+                    setAccidentsCount(count);
+                })
+            ];
+
+            Promise.all(promises)
+                .then(() => {
+                    clearTimeout(timeout);
+                    setIsClicked(false);
+                })
+                .catch((error) => {
+                    clearTimeout(timeout);
+                    setIsClicked(false);
+                });
+        }
+    };
+
+    useEffect(() => {
+        if (accidentsLayer) {
+            refreshStatistics();
+        }
+    }, [accidentsLayer]);
+
+    const refreshStatistics = () => {
+        const timeout = setTimeout(() => {
+            setAlertMessage("Wystąpił problem z uzyskaniem odpowiedzi od serwera o statystykach. Proszę spróbować ponownie później.");
+            setShowAlertSplash(true);
+        }, 60000);
+
+        if (accidentsLayer) {
+            let whereClause = '';
+
+            if (!isAllDate) {
+                whereClause = `rok = '${sliderValue}'`;
+            }
+
+            accidentsLayer.definitionExpression = whereClause;
+
+            const promises = [
+                queryAndProcessStatistics("Marka_sprawcy", setBrandsStatistics, accidentsLayer, viewState, whereClause),
+                queryAndProcessStatistics("Rodzaj_zdarzenia", setAccidentTypeStatistics, accidentsLayer, viewState, whereClause),
+                queryAndProcessStatistics("Rodzaj_pojazdu", setVechicleType, accidentsLayer, viewState, whereClause),
+                accidentsLayer.queryFeatureCount({
+                    geometry: viewState.extent,
+                    where: whereClause
+                }).then(count => {
+                    setAccidentsCount(count);
+                })
+            ];
+
+            Promise.all(promises)
+                .then(() => {
+                    clearTimeout(timeout);
+                })
+                .catch((error) => {
+                    clearTimeout(timeout);
+                    console.error("Error fetching statistics:", error);
+                });
         }
     };
 
@@ -294,6 +412,40 @@ export default function Map2D({ map, setMap, clicked, setClicked, sliderValue, i
                     setTypeOfArea={setTypeOfArea}
                 />
             </div>
+
+            <div
+                ref={refreshButtonRef}
+                className={`refresh-button esri-widget ${isClicked ? 'clicked' : ''}`}
+                onClick={handleRefreshClick}
+                title="Odśwież statystyki dla aktualnego zasięgu mapy"
+            >
+                <span className="esri-icon esri-icon-refresh"></span>
+            </div>
+
+            <div
+                className="single-accidents-button esri-widget"
+                onClick={() => {
+                    if (heatmapLayer.visible) {
+                        heatmapLayer.visible = false;
+                        accidentsLayer.visible = true;
+                        setButtonText("Heatmapa");
+                    } else {
+                        heatmapLayer.visible = true;
+                        accidentsLayer.visible = false;
+                        setButtonText("Pojedyńcze wypadki");
+                    }
+                }}
+                title="Zmień mapę"
+            >
+                {buttonText}
+            </div>
+
+            {showAlertSplash && (
+                <AlertSplash
+                    message={alertMessage}
+                    onClose={() => setShowAlertSplash(false)}
+                />
+            )}
 
             <AccidentsCount isAllDate={isAllDate} accidentsCount={accidentsCount} />
 
