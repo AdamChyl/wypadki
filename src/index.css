@@ -81,14 +81,12 @@ body {
 }
 
 .charts-div {
-  max-width: 16rem;
   padding:10px;
   position: absolute;
-  margin: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  top: 0;
+  left: 1rem;
+  right:85%;
+  bottom: 1rem;
+  top: 1rem;
   background-color: rgb(0, 0, 0, 0);
   color: white;
   justify-content: center;
@@ -96,6 +94,7 @@ body {
   display: flex;
   flex-direction: column;
 }
+
 
 .charts {
   max-width: 15em;
@@ -368,7 +367,7 @@ input[type='checkbox'] {
   text-align: center;
   transition: background-color 0.3s ease;
   position: absolute;
-  top: 3.3rem;
+  top: 3.4rem;
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 1000;
@@ -376,24 +375,6 @@ input[type='checkbox'] {
 
 .single-accidents-button:hover {
   background-color: #555;
-}
-
-@media (min-height: 800px) {
-  .charts-div {
-    padding:10px;
-    position: absolute;
-    left: 1rem;
-    right:85%;
-    bottom: 1rem;
-    top: 1rem;
-    background-color: rgb(0, 0, 0, 0);
-    color: white;
-    justify-content: center;
-    align-items: center;
-    display: flex;
-    flex-direction: column;
-  }
-
 }
 
 
