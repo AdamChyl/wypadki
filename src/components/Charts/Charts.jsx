@@ -210,13 +210,13 @@ export default function Charts({ brandsStatistics, accidentTypeStatistics, vechi
     <div className="mobile-charts">
       <div className="charts-div">
         <div className='inner-charts-div'>
-        <h4 className='charts-desc'>Sprawca</h4>
+        <h4 className='charts-desc'>Marka sprawcy</h4>
           <canvas ref={chartBrandRef} className='charts'></canvas>
         <hr className="filter-break-line" style={{ marginTop: "10px" }} />
-        <h4 className='charts-desc'>Zdarzenie</h4>
+        <h4 className='charts-desc'>Rodzaj zdarzenia</h4>
           <canvas ref={chartAccidentTypeRef} className='charts'></canvas>
         <hr className="filter-break-line" style={{ marginTop: "10px" }} />
-        <h4 className='charts-desc'>Typ Pojazdu</h4>
+        <h4 className='charts-desc'>Typ pojazdu sprawcy</h4>
           <canvas ref={chartVehicleTypeRef} className='charts'></canvas>
         </div>
       </div>

@@ -49,6 +49,14 @@ export default function Map2D({ map, setMap, clicked, setClicked, sliderValue, i
     const rendererInputRef = useRef(null);
     const refreshButtonRef = useRef(null);
 
+    // Funkcja resetująca statystyki
+    function resetStatistics() {
+        setBrandsStatistics(null);
+        setAccidentTypeStatistics(null);
+        setVechicleType(null);
+        setAccidentsCount(null);
+    }
+
     useEffect(() => {
         const webMap = new WebMap({
             portalItem: {
@@ -193,12 +201,14 @@ export default function Map2D({ map, setMap, clicked, setClicked, sliderValue, i
 
             accidentsLayer.watch("definitionExpression", () => {
                 // console.log("Definition Query został zaktualizowany.");
+                resetStatistics();
             });
 
             view.whenLayerView(accidentsLayer).then((layerView) => {
                 layerView.watch("updating", (isUpdating) => {
                     if (isUpdating) {
                         // console.log("Warstwa zaczyna się aktualizować.");
+                        resetStatistics();
                     } else {
                         // console.log("Warstwa jest w pełni zaktualizowana.");
                     }
@@ -265,6 +275,9 @@ export default function Map2D({ map, setMap, clicked, setClicked, sliderValue, i
 
             accidentsLayer.definitionExpression = whereClause;
             heatmapLayer.definitionExpression = whereClause;
+
+            resetStatistics();
+
             accidentsLayer.refresh();
             heatmapLayer.refresh();
         }
@@ -305,6 +318,8 @@ export default function Map2D({ map, setMap, clicked, setClicked, sliderValue, i
         }, 60000);
 
         if (accidentsLayer) {
+            resetStatistics();
+
             let whereClause = '';
 
             if (!isAllDate) {
@@ -344,6 +359,8 @@ export default function Map2D({ map, setMap, clicked, setClicked, sliderValue, i
     }, [accidentsLayer]);
 
     const refreshStatistics = () => {
+        resetStatistics();
+
         const timeout = setTimeout(() => {
             setAlertMessage("Wystąpił problem z uzyskaniem odpowiedzi od serwera o statystykach. Proszę spróbować ponownie później.");
             setShowAlertSplash(true);

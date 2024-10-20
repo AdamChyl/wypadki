@@ -118,13 +118,13 @@ export default function Settings2D({
                         <option value="11">Listopad</option>
                         <option value="12">Grudzień</option>
                     </Select>
-                    <hr className="filter-break-line" />
+                    {/* <hr className="filter-break-line" />
                     <Select handleChange={setVoivodeship} currentValue={voivodeship} title="Województwo">
                         <option value="all">Wszystkie</option>
                         <option value="Lubelskie">Lubelskie</option>
                         <option value="Małopolskie">Małopolskie</option>
                         <option value="Dolnośląskie">Dolnośląskie</option>
-                    </Select>
+                    </Select> */}
                     <hr className="filter-break-line" />
                     <AllDateButton isAllDate={isAllDate} setIsAllDate={setIsAllDate} map={("2D")} />
 

@@ -45,13 +45,13 @@ export default function Settings3D({ setLowerPercentile, setIsExpanded, setWidth
           <h4 style={{ margin: '10px' }}>Ustawienia</h4>
         </div>
 
-        <p className="slider-settings-title" >Szerokość:</p>
+        <p className="slider-settings-title" >Szerokość komórki:</p>
         <WidthSlider handleChange={setWidth} />
         <p className="slider-settings-label" >Wybrana szerokość: <b>{Number(width).toFixed(0)}</b> metrów</p>
 
         <hr className="filter-break-line" />
 
-        <p className="slider-settings-title" style={{ marginTop: "0px" }}>Wyskość:</p>
+        <p className="slider-settings-title" style={{ marginTop: "0px" }}>Wyskość komórki:</p>
         <HeightSlider handleChange={setHeight} height={height} />
         <p className="slider-settings-label">Wybrana wyskość: <b>{Number(height).toFixed(0)}</b></p>
 

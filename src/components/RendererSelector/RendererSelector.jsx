@@ -3,7 +3,7 @@ import { limitRenderer, areaRenderer, dayTimeRenderer, eventTypeRenderer, brandR
 
 export default function RendererSelector({ onRendererChange, defaultRenderer }) {
   const renderers = [
-    { label: 'Biała', value: 'default', renderer: defaultRenderer },
+    // { label: 'Biała', value: 'default', renderer: defaultRenderer },
     { label: 'Ograniczenie prędkości', value: 'limit', renderer: limitRenderer },
     { label: 'Typ obszaru', value: 'area', renderer: areaRenderer },
     { label: 'Pora dnia', value: 'dayTime', renderer: dayTimeRenderer },
