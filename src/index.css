@@ -350,6 +350,60 @@ input[type='checkbox'] {
   font-size: 36px;
 }
 
+.auto-refresh-switch {
+  position: absolute;
+  top: calc(20px + 80px + 1rem);
+  left: 15.8%;
+  z-index: 1000;
+  flex-direction: column;
+  display: flex;
+  align-items: center;
+}
+
+.auto-refresh-switch label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.auto-refresh-switch input[type="checkbox"] {
+  appearance: none;
+  width: 40px;
+  height: 25px;
+  background: #ccc;
+  border-radius: 25px;
+  position: relative;
+  outline: none;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.auto-refresh-switch input[type="checkbox"]:checked {
+  background: #0079c1;
+}
+
+.auto-refresh-switch input[type="checkbox"]::before {
+  content: "";
+  position: absolute;
+  width: 23px;
+  height: 23px;
+  background: #fff;
+  border-radius: 50%;
+  top: 1px;
+  left: 1px;
+  transition: transform 0.3s;
+}
+
+.auto-refresh-switch input[type="checkbox"]:checked::before {
+  transform: translateX(25px);
+}
+
+.auto-refresh-switch span {
+  margin-left: 10px;
+  color: white;
+  font-size: 16px;
+}
+
 .single-accidents-button {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   border: 2px solid #fff;
@@ -375,6 +429,10 @@ input[type='checkbox'] {
 
 .single-accidents-button:hover {
   background-color: #555;
+}
+
+.switch-label {
+  margin-right: 10px;
 }
 
 

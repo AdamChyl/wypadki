@@ -2,17 +2,14 @@ import WebMap from "@arcgis/core/WebMap.js";
 import * as reactiveUtils from "@arcgis/core/core/reactiveUtils.js";
 import MapView from "@arcgis/core/views/MapView.js";
 import Expand from "@arcgis/core/widgets/Expand.js";
-import LayerList from "@arcgis/core/widgets/LayerList.js";
 import Legend from "@arcgis/core/widgets/Legend.js";
 import Search from "@arcgis/core/widgets/Search.js";
-import Zoom from "@arcgis/core/widgets/Zoom.js";
 import { useEffect, useRef, useState } from 'react';
 import AccidentsCount from '../AccidentsCount/AccidentsCount';
-import Header from "../Header/Header";
 import Settings2D from '../Settings2D/Settings2D';
 import SplashScreenWidget from '../Splash/SplashScreenWidget/SplashScreenWidget';
 import { queryAndProcessStatistics } from "../../utils/utils";
-import { limitRenderer, areaRenderer, eventTypeRenderer, brandRenderer, vechicleRenderer, dayTimeRenderer, monthRenderer } from "../../utils/renderers";
+import { limitRenderer } from "../../utils/renderers";
 import RendererSelector from "../RendererSelector/RendererSelector";
 import Charts from "../Charts/Charts";
 import AlertSplash from "../AlertSplash/AlertSplash";
@@ -34,7 +31,6 @@ export default function Map2D({ map, setMap, clicked, setClicked, sliderValue, i
     const [currentExtent, setCurrentExtent] = useState(null);
     const [accidentsCount, setAccidentsCount] = useState(null);
     const [defaultRenderer, setDefaultRenderer] = useState(null);
-    const [isRendererVisible, setIsRendererVisible] = useState(true);
 
     const [alertMessage, setAlertMessage] = useState("");
     const [showAlertSplash, setShowAlertSplash] = useState(false);
@@ -43,18 +39,46 @@ export default function Map2D({ map, setMap, clicked, setClicked, sliderValue, i
     const [accidentTypeStatistics, setAccidentTypeStatistics] = useState(null);
     const [vechicleType, setVechicleType] = useState(null);
 
-    const [buttonText, setButtonText] = useState("Pojedyńcze wypadki");
+    const [buttonText, setButtonText] = useState("Pojedyncze wypadki");
 
     const containerRef2D = useRef(null);
     const rendererInputRef = useRef(null);
-    const refreshButtonRef = useRef(null);
 
-    // Funkcja resetująca statystyki
+    const [autoRefreshStatistics, setAutoRefreshStatistics] = useState(true);
+    const [isClicked, setIsClicked] = useState(false);
+
     function resetStatistics() {
         setBrandsStatistics(null);
         setAccidentTypeStatistics(null);
         setVechicleType(null);
         setAccidentsCount(null);
+    }
+
+    function buildWhereClause() {
+        let whereClause = '';
+
+        if (!isAllDate) {
+            whereClause = `rok = '${sliderValue}'`;
+        }
+
+        const conditions = [
+            { condition: limit !== 'all', expression: `Ograniczenie_predkosci = '${limit}'` },
+            { condition: accidentType !== 'all', expression: `Rodzaj_zdarzenia = '${accidentType}'` },
+            { condition: month !== 'all', expression: `Miesiac = '${month}'` },
+            { condition: brand !== 'all', expression: `Marka_sprawcy = '${brand}'` },
+            { condition: timeOfDay !== 'all', expression: `Pora_dnia = '${timeOfDay}'` },
+            { condition: voivodeship !== 'all', expression: `Województwo = '${voivodeship}'` },
+            { condition: carType !== 'all', expression: `Rodzaj_pojazdu = '${carType}'` },
+            { condition: typeOfArea !== 'all', expression: `Rodzaj_obszaru = '${typeOfArea}'` },
+        ];
+
+        conditions.forEach(({ condition, expression }) => {
+            if (condition) {
+                whereClause += (whereClause.length === 0 ? '' : ' AND ') + expression;
+            }
+        });
+
+        return whereClause;
     }
 
     useEffect(() => {
@@ -118,7 +142,6 @@ export default function Map2D({ map, setMap, clicked, setClicked, sliderValue, i
             group: "top-right"
         });
 
-
         view.ui.padding = { left: 15, top: 30, right: 15, bottom: 15 };
 
         view.when(() => {
@@ -166,7 +189,6 @@ export default function Map2D({ map, setMap, clicked, setClicked, sliderValue, i
             const additionalWidget = document.createElement("div");
             additionalWidget.className = "esri-widget widget-div";
             additionalWidget.style = `
-
                 cursor: pointer;
                 min-width: 32px;
                 min-height: 32px;
@@ -195,26 +217,6 @@ export default function Map2D({ map, setMap, clicked, setClicked, sliderValue, i
 
             view.ui.add(legendExpand, "top-right");
 
-            accidentsLayer.watch("renderer", () => {
-                // console.log("Renderer został zaktualizowany.");
-            });
-
-            accidentsLayer.watch("definitionExpression", () => {
-                // console.log("Definition Query został zaktualizowany.");
-                resetStatistics();
-            });
-
-            view.whenLayerView(accidentsLayer).then((layerView) => {
-                layerView.watch("updating", (isUpdating) => {
-                    if (isUpdating) {
-                        // console.log("Warstwa zaczyna się aktualizować.");
-                        resetStatistics();
-                    } else {
-                        // console.log("Warstwa jest w pełni zaktualizowana.");
-                    }
-                });
-            });
-
             const extentWatchHandle = reactiveUtils.when(
                 () => view.stationary === true,
                 () => {
@@ -230,61 +232,108 @@ export default function Map2D({ map, setMap, clicked, setClicked, sliderValue, i
         };
     }, []);
 
-
     useEffect(() => {
         if (accidentsLayer && heatmapLayer) {
-            let whereClause = '';
-
-            if (!isAllDate) {
-                whereClause = `rok = '${sliderValue}'`;
-
-                const conditions = [
-                    { condition: limit !== 'all', expression: `Ograniczenie_predkosci = '${limit}'` },
-                    { condition: accidentType !== 'all', expression: `Rodzaj_zdarzenia = '${accidentType}'` },
-                    { condition: month !== 'all', expression: `Miesiac = '${month}'` },
-                    { condition: brand !== 'all', expression: `Marka_sprawcy = '${brand}'` },
-                    { condition: timeOfDay !== 'all', expression: `Pora_dnia = '${timeOfDay}'` },
-                    { condition: voivodeship !== 'all', expression: `Województwo = '${voivodeship}'` },
-                    { condition: carType !== 'all', expression: `Rodzaj_pojazdu = '${carType}'` },
-                    { condition: typeOfArea !== 'all', expression: `Rodzaj_obszaru = '${typeOfArea}'` },
-                ];
-
-                conditions.forEach(({ condition, expression }) => {
-                    if (condition) {
-                        whereClause += (whereClause.length === 0 ? '' : ' AND ') + expression;
-                    }
-                });
-            } else {
-                const conditions = [
-                    { condition: limit !== 'all', expression: `Ograniczenie_predkosci = ${limit}` },
-                    { condition: accidentType !== 'all', expression: `Rodzaj_zdarzenia = '${accidentType}'` },
-                    { condition: month !== 'all', expression: `Miesiac = '${month}'` },
-                    { condition: brand !== 'all', expression: `Marka_sprawcy = '${brand}'` },
-                    { condition: timeOfDay !== 'all', expression: `Pora_dnia = '${timeOfDay}'` },
-                    { condition: voivodeship !== 'all', expression: `Województwo = '${voivodeship}'` },
-                    { condition: carType !== 'all', expression: `Rodzaj_pojazdu = '${carType}'` },
-                    { condition: typeOfArea !== 'all', expression: `Rodzaj_obszaru = '${typeOfArea}'` },
-                ];
-
-                conditions.forEach(({ condition, expression }) => {
-                    if (condition) {
-                        whereClause += (whereClause.length === 0 ? '' : ' AND ') + expression;
-                    }
-                });
-            }
+            const whereClause = buildWhereClause();
 
             accidentsLayer.definitionExpression = whereClause;
             heatmapLayer.definitionExpression = whereClause;
 
-            resetStatistics();
-
             accidentsLayer.refresh();
             heatmapLayer.refresh();
         }
-    }, [viewState, currentExtent, accidentsLayer, heatmapLayer, limit, isAllDate,
+    }, [accidentsLayer, heatmapLayer, limit, isAllDate,
         accidentType, month, brand, timeOfDay, voivodeship, carType, typeOfArea, sliderValue]);
 
+    useEffect(() => {
+        if (autoRefreshStatistics && accidentsLayer && viewState) {
+            const whereClause = buildWhereClause();
 
+            resetStatistics();
+
+            setIsClicked(true);
+
+            const timeout = setTimeout(() => {
+                setAlertMessage("Wystąpił problem z uzyskaniem odpowiedzi od serwera o statystykach. Proszę spróbować ponownie później.");
+                setShowAlertSplash(true);
+                setIsClicked(false);
+            }, 60000);
+
+            const promises = [
+                queryAndProcessStatistics("Marka_sprawcy", setBrandsStatistics, accidentsLayer, viewState, whereClause),
+                queryAndProcessStatistics("Rodzaj_zdarzenia", setAccidentTypeStatistics, accidentsLayer, viewState, whereClause),
+                queryAndProcessStatistics("Rodzaj_pojazdu", setVechicleType, accidentsLayer, viewState, whereClause),
+                accidentsLayer.queryFeatureCount({
+                    geometry: viewState.extent,
+                    where: whereClause
+                }).then(count => {
+                    setAccidentsCount(count);
+                })
+            ];
+
+            Promise.all(promises)
+                .then(() => {
+                    clearTimeout(timeout);
+                    setIsClicked(false);
+                })
+                .catch((error) => {
+                    clearTimeout(timeout);
+                    console.error("Error fetching statistics:", error);
+                    setIsClicked(false);
+                });
+        }
+    }, [autoRefreshStatistics, accidentsLayer, viewState, currentExtent, limit, isAllDate, accidentType, month, brand, timeOfDay, voivodeship, carType, typeOfArea, sliderValue]);
+
+    useEffect(() => {
+        if (!autoRefreshStatistics && accidentsLayer && viewState) {
+            resetStatistics();
+        }
+    }, [currentExtent, autoRefreshStatistics, accidentsLayer, viewState]);
+
+    useEffect(() => {
+        if (!autoRefreshStatistics && accidentsLayer && viewState) {
+            const whereClause = buildWhereClause();
+
+            resetStatistics();
+
+            if (viewState.zoom < 10) {
+                setAlertMessage("Statystyki nie są pobierane z takiego zbliżenia, zwiększ zbliżenie!");
+                setShowAlertSplash(true);
+                return;
+            }
+
+            setIsClicked(true);
+
+            const timeout = setTimeout(() => {
+                setAlertMessage("Wystąpił problem z uzyskaniem odpowiedzi od serwera o statystykach. Proszę spróbować ponownie później.");
+                setShowAlertSplash(true);
+                setIsClicked(false);
+            }, 60000);
+
+            const promises = [
+                queryAndProcessStatistics("Marka_sprawcy", setBrandsStatistics, accidentsLayer, viewState, whereClause),
+                queryAndProcessStatistics("Rodzaj_zdarzenia", setAccidentTypeStatistics, accidentsLayer, viewState, whereClause),
+                queryAndProcessStatistics("Rodzaj_pojazdu", setVechicleType, accidentsLayer, viewState, whereClause),
+                accidentsLayer.queryFeatureCount({
+                    geometry: viewState.extent,
+                    where: whereClause
+                }).then(count => {
+                    setAccidentsCount(count);
+                })
+            ];
+
+            Promise.all(promises)
+                .then(() => {
+                    clearTimeout(timeout);
+                    setIsClicked(false);
+                })
+                .catch((error) => {
+                    clearTimeout(timeout);
+                    console.error("Error fetching statistics:", error);
+                    setIsClicked(false);
+                });
+        }
+    }, [autoRefreshStatistics, accidentsLayer, viewState, limit, isAllDate, accidentType, month, brand, timeOfDay, voivodeship, carType, typeOfArea, sliderValue]);
 
     function handleClick() {
         setClicked((prev) => !prev);
@@ -295,8 +344,6 @@ export default function Map2D({ map, setMap, clicked, setClicked, sliderValue, i
             accidentsLayer.renderer = renderer;
         }
     };
-
-    const [isClicked, setIsClicked] = useState(false);
 
     const handleRefreshClick = () => {
         if (isClicked) {
@@ -320,13 +367,7 @@ export default function Map2D({ map, setMap, clicked, setClicked, sliderValue, i
         if (accidentsLayer) {
             resetStatistics();
 
-            let whereClause = '';
-
-            if (!isAllDate) {
-                whereClause = `rok = '${sliderValue}'`;
-            }
-
-            accidentsLayer.definitionExpression = whereClause;
+            const whereClause = buildWhereClause();
 
             const promises = [
                 queryAndProcessStatistics("Marka_sprawcy", setBrandsStatistics, accidentsLayer, viewState, whereClause),
@@ -348,52 +389,6 @@ export default function Map2D({ map, setMap, clicked, setClicked, sliderValue, i
                 .catch((error) => {
                     clearTimeout(timeout);
                     setIsClicked(false);
-                });
-        }
-    };
-
-    useEffect(() => {
-        if (accidentsLayer) {
-            refreshStatistics();
-        }
-    }, [accidentsLayer]);
-
-    const refreshStatistics = () => {
-        resetStatistics();
-
-        const timeout = setTimeout(() => {
-            setAlertMessage("Wystąpił problem z uzyskaniem odpowiedzi od serwera o statystykach. Proszę spróbować ponownie później.");
-            setShowAlertSplash(true);
-        }, 60000);
-
-        if (accidentsLayer) {
-            let whereClause = '';
-
-            if (!isAllDate) {
-                whereClause = `rok = '${sliderValue}'`;
-            }
-
-            accidentsLayer.definitionExpression = whereClause;
-
-            const promises = [
-                queryAndProcessStatistics("Marka_sprawcy", setBrandsStatistics, accidentsLayer, viewState, whereClause),
-                queryAndProcessStatistics("Rodzaj_zdarzenia", setAccidentTypeStatistics, accidentsLayer, viewState, whereClause),
-                queryAndProcessStatistics("Rodzaj_pojazdu", setVechicleType, accidentsLayer, viewState, whereClause),
-                accidentsLayer.queryFeatureCount({
-                    geometry: viewState.extent,
-                    where: whereClause
-                }).then(count => {
-                    setAccidentsCount(count);
-                })
-            ];
-
-            Promise.all(promises)
-                .then(() => {
-                    clearTimeout(timeout);
-                })
-                .catch((error) => {
-                    clearTimeout(timeout);
-                    console.error("Error fetching statistics:", error);
                 });
         }
     };
@@ -401,7 +396,6 @@ export default function Map2D({ map, setMap, clicked, setClicked, sliderValue, i
     return (
         <>
             <div id="viewDiv"></div>
-            {/* <Header position="left">Mapa Wypadków 2D</Header> */}
             <SplashScreenWidget className={clicked ? "" : "hide"} onClick={handleClick} map={map}></SplashScreenWidget>
             <Charts brandsStatistics={brandsStatistics} accidentTypeStatistics={accidentTypeStatistics} vechicleType={vechicleType} />
             <div ref={rendererInputRef}>
@@ -431,12 +425,20 @@ export default function Map2D({ map, setMap, clicked, setClicked, sliderValue, i
             </div>
 
             <div
-                ref={refreshButtonRef}
                 className={`refresh-button esri-widget ${isClicked ? 'clicked' : ''}`}
                 onClick={handleRefreshClick}
                 title="Odśwież statystyki dla aktualnego zasięgu mapy"
             >
                 <span className="esri-icon esri-icon-refresh"></span>
+            </div>
+
+            <div className="auto-refresh-switch" title="Automatycznie odświeżaj statystyki przy zmianie parametrów mapy">
+                <span className="switch-label">Auto-odśw.</span>
+                <input
+                    type="checkbox"
+                    checked={autoRefreshStatistics}
+                    onChange={(e) => setAutoRefreshStatistics(e.target.checked)}
+                />
             </div>
 
             <div
@@ -449,7 +451,7 @@ export default function Map2D({ map, setMap, clicked, setClicked, sliderValue, i
                     } else {
                         heatmapLayer.visible = true;
                         accidentsLayer.visible = false;
-                        setButtonText("Pojedyńcze wypadki");
+                        setButtonText("Pojedyncze wypadki");
                     }
                 }}
                 title="Zmień mapę"
